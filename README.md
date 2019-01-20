@@ -8,4 +8,4 @@ I made this because I am looking forward to taking a class on space flight and b
 
 # Example
 
-![Example plot](example3.png)
+![Example plot](example2.png)
