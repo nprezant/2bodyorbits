@@ -8,4 +8,4 @@ I made this because I am looking forward to taking a class on space flight and b
 
 # Example
 
-![Example plot](biggif_less.gif)
+![Example plot](biggif_less2.gif)
