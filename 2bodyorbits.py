@@ -127,7 +127,6 @@ def orbit_calc_2D(body1, body2, t_delta):
     '''
     
     # add the current position to the history
-    # # TODO YOU MIGHT NEED TO COPY THESE OR ELSE THEY'LL JUST BE REFERENCES
     body1.posh.append(body1.pos.copy())
     body1.velh.append(body1.vel.copy())
     body1.acch.append(body1.acc.copy())
@@ -176,6 +175,8 @@ def animate_body(body1, body2, t_delta):
     trace1, = ax.plot(x1, y1, 'b--')
     trace2, = ax.plot(x2, y2, 'r--')
 
+    ax.axis('equal')
+
     #plt.show()
     
     #ax.set_xlim(np.min([x1, x2])-1000, np.max([x1,x2])+1000)
@@ -201,6 +202,9 @@ def animate_body(body1, body2, t_delta):
         fig=fig, func=animate, fargs=(line1,line2,trace1,trace2,x1,y1,x2,y2), frames=frames,
         interval=1, blit=True, save_count=100)
 
+    #writer = animation.ImageMagickWriter(fps=15)
+    #ani.save('example.html', 'ImageMagickWriter')
+
     plt.show()
 
 
@@ -209,9 +213,16 @@ def animate_body_realtime(body1, body2):
     fig, ax = plt.subplots()
     line1, = ax.plot(0, 0, marker='o', color='b')
     line2, = ax.plot(1, 1, marker='o', color='r')
+    trace1, = ax.plot(0, 0, 'b--')
+    trace2, = ax.plot(1, 1, 'r--')
 
     ax.set_xlim(-400 * 10**6, 400 * 10**6)
     ax.set_ylim(-400 * 10**6, 400 * 10**6)
+
+    #ax.set_xlim(np.min([body1.pos.x, body2.pos.x])-100000, np.max([body1.pos.x, body2.pos.x])+100000)
+    #ax.set_ylim(np.min([body1.pos.y, body2.pos.y])-100000, np.max([body1.pos.y, body2.pos.y])+100000)
+
+    #ax.set_aspect('equal', 'box')
 
 
     def animate(frame, line1, line2, body1, body2):
@@ -224,8 +235,18 @@ def animate_body_realtime(body1, body2):
         line2.set_xdata(body2.pos.x)
         line2.set_ydata(body2.pos.y)
 
-        #print(f'Moon Position: {body2.pos} {body2.vel} {body2.acc}')
-        return line1, line2
+        body1trace = body1.posh[:frame]
+        body2trace = body2.posh[:frame]
+
+        trace1.set_xdata([pos.x for pos in body1trace])
+        trace1.set_ydata([pos.y for pos in body1trace])
+
+        trace2.set_xdata([pos.x for pos in body2trace])
+        trace2.set_ydata([pos.y for pos in body2trace])
+
+        #line1.axes.set_aspect('equal')
+        
+        return line1, line2, trace1, trace2
 
 
     ani = animation.FuncAnimation(
@@ -249,7 +270,7 @@ def main():
 
     t_delta = 5000
 
-    #animate_body_realtime(body1, body2, t_delta)
+    #animate_body_realtime(body1, body2)
 
     times = np.arange(0, 10000000, t_delta)
     for t in times:
